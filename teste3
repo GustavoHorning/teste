@@ -1,0 +1,126 @@
+1. Bubble Sort com Contador de Trocas e Comparações
+🎯 Objetivo: Mostrar eficiência (ou ineficiência) do algoritmo.
+
+java
+Copiar
+Editar
+public static void bubbleSortEstatisticas(int[] arr) {
+    int n = arr.length;
+    int comparacoes = 0;
+    int trocas = 0;
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            comparacoes++;
+            if (arr[j] > arr[j + 1]) {
+                trocas++;
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+
+    System.out.println("Total de comparações: " + comparacoes);
+    System.out.println("Total de trocas: " + trocas);
+}
+💭 2. Bubble Sort com Impressão do Array em Cada Passada
+🎯 Objetivo: Visualizar como o array vai sendo ordenado passo a passo.
+
+java
+Copiar
+Editar
+public static void bubbleSortVisual(int[] arr) {
+    int n = arr.length;
+
+    for (int i = 0; i < n - 1; i++) {
+        System.out.println("Passada " + (i + 1) + ":");
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+        System.out.println(Arrays.toString(arr));
+    }
+}
+✍️ 3. Insertion Sort com Passos Detalhados
+🎯 Objetivo: Ver onde o elemento "key" é inserido em cada iteração.
+
+java
+Copiar
+Editar
+public static void insertionSortVisual(int[] arr) {
+    int n = arr.length;
+    for (int i = 1; i < n; ++i) {
+        int key = arr[i];
+        int j = i - 1;
+
+        System.out.println("Inserindo: " + key);
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+        System.out.println("Estado do array: " + Arrays.toString(arr));
+    }
+}
+📊 4. Insertion Sort com Contador de Comparações e Movimentações
+🎯 Objetivo: Comparar com o Bubble Sort em termos de eficiência.
+
+java
+Copiar
+Editar
+public static void insertionSortEstatisticas(int[] arr) {
+    int comparacoes = 0;
+    int movimentacoes = 0;
+    int n = arr.length;
+
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+
+        while (j >= 0 && arr[j] > key) {
+            comparacoes++;
+            arr[j + 1] = arr[j];
+            movimentacoes++;
+            j--;
+        }
+
+        // Conta a última comparação que fez o while parar
+        if (j >= 0) comparacoes++;
+
+        arr[j + 1] = key;
+        movimentacoes++;
+    }
+
+    System.out.println("Comparações: " + comparacoes);
+    System.out.println("Movimentações: " + movimentacoes);
+}
+🧪 5. Comparação Direta: Insertion vs Bubble
+🎯 Objetivo: Usar o mesmo array e mostrar qual algoritmo foi mais eficiente.
+
+java
+Copiar
+Editar
+public static void compararBubbleVsInsertion(int[] original) {
+    int[] arr1 = original.clone();
+    int[] arr2 = original.clone();
+
+    System.out.println("🔵 Bubble Sort:");
+    bubbleSortEstatisticas(arr1);
+
+    System.out.println("\n🟢 Insertion Sort:");
+    insertionSortEstatisticas(arr2);
+}
+Se quiser, posso unir todos esses algoritmos em um único menu em Java para você rodar e escolher qual testar. Deseja isso?
+
+
+
+
+
+
+
+
+
