@@ -1,0 +1,96 @@
+Parte 1: O main - O Maestro do Experimento
+Esta é a sala de controle principal, onde o cientista define e inicia todo o processo.
+
+Java
+
+public class Main {
+    public static void main(String[] args) {
+        // ... corpo do main ...
+    }
+    // ... outras funções auxiliares ...
+}
+A Dissecação Linha por Linha do main
+String[] fileTypes = {"aleatorio", "crescente", "decrescente"};
+int[] sizes = {100, 1000, 10000};
+String dataFolder = "conjuntosDeDados/";
+
+O que faz: A preparação do experimento. O cientista está definindo suas variáveis:
+fileTypes: "Quais tipos de 'cobaias' eu vou testar? Listas com números aleatórios, em ordem crescente e em ordem decrescente."
+sizes: "E qual o tamanho de cada uma dessas listas? Vou testar com 100, 1.000 e 10.000 números."
+dataFolder: "Onde estão guardadas as minhas cobaias? Na pasta conjuntosDeDados/."
+System.out.println("Iniciando a análise...");
+System.out.printf("%-25s %-15s ...\n", ...);
+
+O que faz: A preparação da "prancheta de anotações". O cientista imprime um cabeçalho bem formatado no console para criar uma tabela onde ele anotará os resultados.
+O que é %-25s? É um código de formatação que diz: "Reserve 25 espaços para este texto (s de string) e o alinhe à esquerda (-)." Isso garante que a tabela fique bonita e alinhada.
+for (String type : fileTypes)
+for (int size : sizes)
+
+O que faz: O coração do experimento. O cientista cria dois loops, um dentro do outro, para garantir que todas as combinações possíveis sejam testadas.
+O primeiro loop diz: "Para cada tipo na minha lista fileTypes..."
+O segundo loop diz: "...e para cada tamanho na minha lista sizes..."
+Juntos, eles vão executar o teste para: aleatorio de 100, aleatorio de 1000, aleatorio de 10000, depois crescente de 100, crescente de 1000, e assim por diante.
+String fileName = String.format("%s_%d.csv", type, size);
+String filePath = dataFolder + fileName;
+
+O que faz: Monta o nome do arquivo exato para cada teste. Por exemplo, quando type for "aleatorio" e size for 100, ele cria o nome de arquivo aleatorio_100.csv e o caminho completo conjuntosDeDados/aleatorio_100.csv.
+int[] dataForBubble = CsvReader.readCsv(filePath);
+int[] dataForInsertion = Arrays.copyOf(dataForBubble, dataForBubble.length);
+int[] dataForQuick = Arrays.copyOf(dataForBubble, dataForQuick.length);
+
+O que faz: Esta é uma das partes mais importantes do experimento!
+Primeiro, ele lê os números do arquivo e os guarda em dataForBubble.
+Depois, ele cria duas cópias exatas e independentes desses dados.
+Por que fazer cópias? Pense que você tem 3 corredores para testar na mesma pista. Se você deixar o primeiro corredor correr, ele vai deixar a pista cheia de marcas de sapato. Seria injusto para os próximos corredores! Você precisa "resetar" a pista para cada um. Aqui é a mesma coisa. Os algoritmos de ordenação modificam a lista. Se passássemos a mesma lista para os três, apenas o primeiro (Bubble Sort) pegaria a lista desordenada. O segundo a pegaria já ordenada, o que daria um resultado de tempo totalmente falso. Por isso, criamos uma cópia idêntica e "zerada" para cada "corredor" (algoritmo).
+long bubbleTime = measureTime(() -> Sorters.bubbleSort(dataForBubble));
+
+O que faz: Executa o teste para o Bubble Sort. Ele chama uma função especial measureTime (nosso cronômetro) e, como tarefa, passa a ordenação do Bubble Sort. O tempo que demorou é guardado em bubbleTime. (Explicaremos como o measureTime funciona daqui a pouco).
+System.out.printf("%-25s %-15d ...\n", ...);
+
+O que faz: Anota os resultados na prancheta. Ele imprime uma nova linha na nossa tabela com o nome do teste, o tamanho, e os tempos que cada algoritmo levou.
+Parte 2: O measureTime e a SortingFunction - O Cronômetro Universal
+O cientista precisa de um cronômetro, mas ele é inteligente. Ele quer um cronômetro que possa medir o tempo de qualquer tarefa, não apenas de um algoritmo específico.
+
+A Dissecação do Cronômetro
+interface SortingFunction (O Molde da Tarefa)
+
+Java
+
+@FunctionalInterface
+interface SortingFunction {
+    void sort();
+}
+O que faz: Pense nisso como criar um "molde" ou um "contrato" para uma tarefa. Ele diz: "Eu não sei o que a tarefa faz, mas para ser considerada uma SortingFunction, ela precisa obrigatoriamente ter um método chamado sort que não recebe nada e não devolve nada." É uma forma de padronizar as tarefas.
+private static long measureTime(SortingFunction sortingFunction) (O Cronometrista)
+
+Java
+
+private static long measureTime(SortingFunction sortingFunction) {
+    long startTime = System.nanoTime(); // 1. Liga o cronômetro
+    sortingFunction.sort();              // 2. Executa a tarefa!
+    long endTime = System.nanoTime();   // 3. Para o cronômetro
+    return (endTime - startTime) / 1_000_000; // 4. Calcula e devolve o tempo
+}
+O que faz: Esta é a função do cronômetro.
+Ela não quer saber se vai medir Bubble, Quick ou outra coisa. Ela só aceita uma tarefa que se encaixe no "molde" SortingFunction.
+System.nanoTime(): Pega o tempo atual do sistema com a maior precisão possível (nanossegundos).
+sortingFunction.sort(): O ponto principal! Ele diz "Ok, tarefa que eu recebi, execute o seu método sort() agora!". É aqui que o Bubble Sort, o Insertion Sort ou o Quick Sort efetivamente rodam.
+Após a tarefa terminar, ele pega o tempo final e calcula a diferença, dividindo por 1 milhão para nos dar o resultado em milissegundos, que são mais fáceis de ler.
+A Mágica do () -> ... (A Tarefa Instantânea)
+E como nós passamos a tarefa para o measureTime? Usando uma "Expressão Lambda".
+
+measureTime(() -> Sorters.bubbleSort(dataForBubble));
+
+O que () -> ... significa? É uma forma moderna e curta de dizer:
+"Ei, Java! Estou criando aqui, na hora, uma tarefa que se encaixa perfeitamente no molde SortingFunction. O método sort() dessa minha tarefa instantânea vai ser simplesmente executar Sorters.bubbleSort(dataForBubble). Agora pegue essa tarefa e entregue para o measureTime."
+
+É como preencher um formulário na hora e entregar para o funcionário, em vez de ter que criar um documento formal e complexo.
+
+Resumo Final
+O cientista (main) define os testes que quer fazer.
+Ele entra em um loop para testar cada combinação de tipo e tamanho de lista.
+Dentro do loop, ele lê os dados e cria cópias para garantir um teste justo.
+Para cada algoritmo, ele cria uma tarefa instantânea (() -> ...) e a entrega para o cronometrista (measureTime).
+O cronometrista liga o relógio, executa a tarefa, para o relógio e devolve o tempo gasto.
+O cientista anota o tempo na sua tabela e passa para o próximo teste.
+No final, ele terá uma tabela completa mostrando qual algoritmo foi o herói e qual foi o vilão para cada tipo de desafio!
