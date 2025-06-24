@@ -1,0 +1,23 @@
+public static void quickSortSingleStep(int[] arr, int begin, int end) {
+    if (begin < end) {
+        int partitionIndex = partition(arr, begin, end);
+
+        int pivot = arr[partitionIndex];
+
+        int leftSize = partitionIndex - begin;
+        int rightSize = end - partitionIndex;
+
+        System.out.println("Pivô escolhido: " + pivot);
+        System.out.println("Tamanho da partição menor: " + leftSize);
+        System.out.println("Tamanho da partição maior: " + rightSize);
+
+        // Não chama mais as recursões! Para por aqui.
+    }
+}
+
+public static void main(String[] args) {
+    int[] arr = {1, 12, 4, 5, 7, 9, 10, 12};
+
+    quickSortSingleStep(arr, 0, arr.length - 1);
+}
+
