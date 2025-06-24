@@ -1,0 +1,183 @@
+1. Exibir Pivô e Elementos das Partições
+java
+Copiar
+Editar
+public static void quickSortParticoes(int[] arr) {
+    int pivotIndex = partition(arr, 0, arr.length - 1);
+    int pivot = arr[pivotIndex];
+
+    System.out.println("Pivô: " + pivot);
+
+    System.out.print("Partição esquerda: ");
+    for (int i = 0; i < pivotIndex; i++) {
+        System.out.print(arr[i] + " ");
+    }
+
+    System.out.print("\nPartição direita: ");
+    for (int i = pivotIndex + 1; i < arr.length; i++) {
+        System.out.print(arr[i] + " ");
+    }
+    System.out.println();
+}
+📍 2. Usar Primeiro Elemento como Pivô
+java
+Copiar
+Editar
+private static int partitionPrimeiroPivo(int[] arr, int begin, int end) {
+    int pivot = arr[begin];
+    int i = end + 1;
+
+    for (int j = end; j > begin; j--) {
+        if (arr[j] >= pivot) {
+            i--;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+
+    arr[begin] = arr[i - 1];
+    arr[i - 1] = pivot;
+
+    return i - 1;
+}
+
+public static void quickSortPivoInicio(int[] arr) {
+    int index = partitionPrimeiroPivo(arr, 0, arr.length - 1);
+    System.out.println("Pivô (início): " + arr[index]);
+    System.out.println("Vetor após partição: " + Arrays.toString(arr));
+}
+⚖️ 3. Comparar 3 Estratégias de Pivô
+java
+Copiar
+Editar
+public static void testar3Pivos(int[] original) {
+    testarComPivo(original.clone(), "Primeiro", original[0]);
+    testarComPivo(original.clone(), "Último", original[original.length - 1]);
+    testarComPivo(original.clone(), "Central", original[original.length / 2]);
+}
+
+private static void testarComPivo(int[] arr, String tipo, int valorPivo) {
+    int index = particaoCustomizada(arr, valorPivo);
+    System.out.println(tipo + " pivô (" + valorPivo + ") → Array: " + Arrays.toString(arr));
+}
+
+private static int particaoCustomizada(int[] arr, int pivo) {
+    int i = -1;
+    for (int j = 0; j < arr.length - 1; j++) {
+        if (arr[j] <= pivo) {
+            i++;
+            int tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+        }
+    }
+    return i;
+}
+🔍 4. Contar Comparações e Trocas
+java
+Copiar
+Editar
+public static void quickSortContagem(int[] arr) {
+    int comp = 0, trocas = 0;
+    int pivot = arr[arr.length - 1];
+    int i = -1;
+
+    for (int j = 0; j < arr.length - 1; j++) {
+        comp++;
+        if (arr[j] <= pivot) {
+            i++;
+            trocas++;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+
+    trocas++;
+    arr[i + 1] = arr[arr.length - 1];
+    arr[arr.length - 1] = pivot;
+
+    System.out.println("Comparações: " + comp);
+    System.out.println("Trocas: " + trocas);
+    System.out.println("Array final: " + Arrays.toString(arr));
+}
+🔁 5. Simular Quick Sort Iterativo (1 passo)
+java
+Copiar
+Editar
+public static void quickSortIterativo1Passo(int[] arr) {
+    Stack<int[]> pilha = new Stack<>();
+    pilha.push(new int[]{0, arr.length - 1});
+
+    if (!pilha.isEmpty()) {
+        int[] intervalo = pilha.pop();
+        int index = partition(arr, intervalo[0], intervalo[1]);
+        System.out.println("Pivô (iterativo): " + arr[index]);
+        System.out.println("Vetor após partição: " + Arrays.toString(arr));
+    }
+}
+⚔️ 6. Usar Esquema de Partição de Hoare
+java
+Copiar
+Editar
+private static int partitionHoare(int[] arr, int low, int high) {
+    int pivot = arr[low];
+    int i = low - 1, j = high + 1;
+
+    while (true) {
+        do {
+            i++;
+        } while (arr[i] < pivot);
+
+        do {
+            j--;
+        } while (arr[j] > pivot);
+
+        if (i >= j) return j;
+
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+
+public static void quickSortHoare1Particao(int[] arr) {
+    int index = partitionHoare(arr, 0, arr.length - 1);
+    System.out.println("Partição Hoare (índice retorno): " + index);
+    System.out.println("Vetor: " + Arrays.toString(arr));
+}
+📈 7. Achar a Mediana com Base no Pivô
+java
+Copiar
+Editar
+public static void quickSortComMediana(int[] arr) {
+    int index = partition(arr, 0, arr.length - 1);
+    int meio = arr.length / 2;
+
+    System.out.println("Pivô na posição: " + index);
+    System.out.println("É a mediana? " + (index == meio));
+    System.out.println("Vetor: " + Arrays.toString(arr));
+}
+🧪 8. Detectar Duplicatas nas Partições
+java
+Copiar
+Editar
+public static void quickSortDuplicatas(int[] arr) {
+    int index = partition(arr, 0, arr.length - 1);
+    Set<Integer> esquerda = new HashSet<>();
+    Set<Integer> direita = new HashSet<>();
+    boolean dupEsq = false, dupDir = false;
+
+    for (int i = 0; i < index; i++) {
+        if (!esquerda.add(arr[i])) dupEsq = true;
+    }
+
+    for (int i = index + 1; i < arr.length; i++) {
+        if (!direita.add(arr[i])) dupDir = true;
+    }
+
+    System.out.println("Duplicatas à esquerda? " + dupEsq);
+    System.out.println("Duplicatas à direita? " + dupDir);
+}
+Se quiser, posso organizar todos esses em um único arquivo Java com menu interativo para você testar todos de uma vez. Quer que eu faça isso?
